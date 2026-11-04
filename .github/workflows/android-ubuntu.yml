@@ -1,0 +1,52 @@
+name: Android CI (Ubuntu)
+
+# Same build as android.yml on a Linux runner, because macOS runners can sit
+# in the queue for a long time. Kept as a separate file so upstream's
+# android.yml is never modified.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+    paths-ignore: '**.md'
+  pull_request:
+    branches: main
+    paths-ignore: '**.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out
+      uses: actions/checkout@v7
+      with:
+        submodules: 'recursive'
+        fetch-depth: 0
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew --warning-mode all assembleRelease
+
+    - name: Label CI version when not a final release code
+      run: |
+        VERCODE=$(perl -n -e "print \$1 if /^versionCode=(.*)/" module/module.prop)
+        if [ "$(echo $VERCODE | grep -o '.$')" -eq 1 ]; then
+          perl -pi -e "s/^version=(.*)/version=\$1($VERCODE)-CI #${{ github.run_number }}/" module/module.prop
+        fi
+
+    - name: Upload CI module zip as artifact zip
+      uses: actions/upload-artifact@v7
+      with:
+        name: PlayIntegrityFork-CI-ubuntu_#${{ github.run_number }}
+        path: 'module/*'
+        compression-level: 9

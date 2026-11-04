@@ -1,0 +1,43 @@
+#
+# Reference config for Android 13 and above. It has no fingerprint on purpose.
+#
+# Tested on a Pixel 6, Android 14, custom ROM: basic, device and Play Store
+# certification. Other devices can differ.
+#
+# To use it, copy this file over custom.pif.prop, then generate and apply a
+# print in the WebUI. Applying keeps the Advanced Settings and the extra
+# properties below and takes everything print related from the new print.
+# Without a print the module has no FINGERPRINT and spoofs nothing.
+#
+
+# Build Fields
+MANUFACTURER=Google
+MODEL=Pixel 6a
+BRAND=google
+PRODUCT=bluejay_beta
+DEVICE=bluejay
+RELEASE=CANARY
+TYPE=user
+TAGS=release-keys
+SECURITY_PATCH=2026-10-05
+DEVICE_INITIAL_SDK_INT=32
+
+# System Properties
+ro.product.device=bluejay
+ro.product.name=bluejay_beta
+ro.build.version.security_patch=2026-10-05
+ro.board.first_api_level=32
+ro.product.first_api_level=32
+ro.product.model=Pixel 6a
+ro.product.brand=google
+init.svc.adbd=stopped
+sys.usb.state=mtp
+
+# Advanced Settings
+spoofBuild=1
+spoofProps=1
+spoofProvider=0
+spoofSignature=0
+spoofVendingFinger=1
+spoofVendingSdk=0
+verboseLogs=0

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <title>Play Integrity Fork</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/mmrl/insets.css">
+</head>
+<body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="i-device" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+        <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+        <symbol id="i-log" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 10l3 2.5L7 15M12.5 15H17"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><path d="M12 7.6v.1"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M6 4h11a1 1 0 0 1 1 1v14H7a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1z"/><path d="M9 8.5h6M9 12h6"/></symbol>
+    </svg>
+
+    <header class="appbar">
+        <h1>Play Integrity Fork</h1>
+        <span id="version" class="tag"></span>
+    </header>
+
+    <main>
+        <!-- Device -->
+        <section id="panel-device" class="panel">
+            <div id="gen-progress" class="card progress" hidden role="status">
+                <p id="gen-label" class="strong"></p>
+                <div class="meter indeterminate"><i></i></div>
+                <p id="gen-step" class="caption"></p>
+                <button class="btn text" data-go="log">View log</button>
+            </div>
+
+            <section id="pending" class="card pending" hidden></section>
+
+            <section id="active" class="card" aria-live="polite">
+                <div class="skeleton w40"></div>
+                <div class="skeleton w70"></div>
+                <div class="skeleton w55"></div>
+            </section>
+
+            <h2 class="label">New fingerprint</h2>
+            <div class="list">
+                <button id="device-row" class="row" disabled>
+                    <span class="row-main">
+                        <span class="row-title">Device</span>
+                        <span id="device-value" class="row-sub">Loading devices</span>
+                    </span>
+                    <svg class="ic" aria-hidden="true"><use href="#i-chevron"/></svg>
+                </button>
+            </div>
+            <p id="device-note" class="caption pad"></p>
+            <p id="gen-error" class="caption pad danger" hidden role="alert"></p>
+            <div class="actions">
+                <button id="btn-generate" class="btn filled" disabled>Generate</button>
+                <button id="btn-random" class="btn text" disabled>Random Canary</button>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section id="panel-settings" class="panel" hidden>
+            <p id="settings-note" class="caption pad" hidden></p>
+            <div id="settings-form">
+                <div class="skeleton w40"></div>
+                <div class="skeleton w70"></div>
+                <div class="skeleton w55"></div>
+            </div>
+        </section>
+
+        <!-- Cheatsheet -->
+        <section id="panel-cheatsheet" class="panel" hidden></section>
+
+        <!-- Log -->
+        <section id="panel-log" class="panel" hidden>
+            <div class="toolbar">
+                <h2 class="label">Output</h2>
+                <span class="grow"></span>
+                <button id="btn-copy" class="btn text">Copy</button>
+                <button id="btn-clear" class="btn text">Clear</button>
+            </div>
+            <div id="log" class="log" tabindex="0" role="log"></div>
+        </section>
+    </main>
+
+    <div id="savebar" class="savebar" aria-hidden="true">
+        <span id="dirty-text"></span>
+        <button id="btn-revert" class="btn text">Discard</button>
+        <button id="btn-save" class="btn filled">Save</button>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+        <button class="nav-item" data-go="device" aria-current="page"><span class="pill"><svg class="ic"><use href="#i-device"/></svg></span>Device</button>
+        <button class="nav-item" data-go="settings"><span class="pill"><svg class="ic"><use href="#i-tune"/></svg></span>Settings</button>
+        <button class="nav-item" data-go="cheatsheet"><span class="pill"><svg class="ic"><use href="#i-book"/></svg></span>Cheatsheet</button>
+        <button class="nav-item" data-go="log"><span class="pill"><svg class="ic"><use href="#i-log"/></svg></span>Log</button>
+    </nav>
+
+    <div id="sheet" class="sheet" aria-hidden="true">
+        <div class="scrim" data-close></div>
+        <div class="sheet-panel" role="dialog" aria-modal="true" aria-label="Choose device">
+            <div class="grabber"></div>
+            <div class="sheet-head">
+                <h2>Choose device</h2>
+                <button id="device-refresh" class="icon-btn" aria-label="Refresh device list"><svg class="ic"><use href="#i-refresh"/></svg></button>
+            </div>
+            <input id="device-search" class="field" type="search" placeholder="Search model or codename" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <ul id="device-list" class="device-list" role="listbox"></ul>
+            <p id="sheet-note" class="caption pad"></p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" role="status"></div>
+
+    <script src="hints.js"></script>
+    <script src="cheatsheet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
